@@ -15,7 +15,11 @@
     <aside class="sidebar">
       <div>
         <div class="brand-section">
-          <div class="qualys-logo-badge">Q</div>
+          <div class="qualys-logo-badge" title="Qualys">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="#ed1c24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11.9986 0C5.4353 0 2.1382 3.5117 2.1382 3.5117s-.3775 2.5993-.1366 7.8332C2.3654 19.2513 11.999 24.0005 11.9999 24c.001-.0005 9.6347-4.7488 9.9985-12.6551.2408-5.2339-.1364-7.8332-.1364-7.8332S18.562 0 11.9986 0zm-.6782 2.9194a7.3657 7.3657 0 0 1 8.0454 7.3343 7.1158 7.1158 0 0 1-2.7712 5.6342c-1.1788-.108-2.4098-.4423-2.9676-.7605 1.4379-.9177 3.3036-2.7033 3.3036-4.8737a4.9361 4.9361 0 0 0-4.9305-4.9305c-2.7165 0-4.9266 2.2743-4.9266 5.0698 0 2.332 1.2355 4.1624 3.6718 5.4404 1.5943.8363 3.9724 1.449 6.4852 1.7723-.418.6225-1.533 1.686-2.1847 2.0462-3.0087-.4934-5.6513-1.5354-7.4578-3.0964-1.9323-1.6699-2.9536-3.8488-2.9536-6.3018a7.3657 7.3657 0 0 1 6.686-7.3343Z"/>
+            </svg>
+          </div>
           <div class="brand-text">
             <h1>QUALYS</h1>
             <span>Tag Assistant</span>
@@ -23,7 +27,7 @@
         </div>
 
         <ul class="nav-menu">
-          <li class="nav-item active">
+          <li class="nav-item active" data-view="dashboardView">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="7" height="7"></rect>
               <rect x="14" y="3" width="7" height="7"></rect>
@@ -32,21 +36,7 @@
             </svg>
             <span>Dashboard</span>
           </li>
-          <li class="nav-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-              <line x1="7" y1="7" x2="7.01" y2="7"></line>
-            </svg>
-            <span>Asset Tags</span>
-          </li>
-          <li class="nav-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-            <span>API Settings</span>
-          </li>
-          <li class="nav-item">
+          <li class="nav-item" data-view="tagsCatalogView">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
               <polyline points="14 2 14 8 20 8"></polyline>
@@ -54,18 +44,32 @@
               <line x1="16" y1="17" x2="8" y2="17"></line>
               <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-            <span>QQL Catalog</span>
+            <span>Tags Catalog</span>
+          </li>
+          <li class="nav-item" data-view="apiSettingsView">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>API Settings</span>
+          </li>
+          <li class="nav-item" data-view="logsView">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 17 10 11 4 5"></polyline>
+              <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+            <span>Activity Logs</span>
           </li>
         </ul>
       </div>
 
       <div class="sidebar-footer">
         <div>API Version 2.0</div>
-        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Cloudflare Edge Edition</div>
+        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Local Session Active</div>
       </div>
     </aside>
 
-    <!-- 2. MAIN WORKSPACE (Fitted to 100vh) -->
+    <!-- 2. MAIN WORKSPACE -->
     <div class="workspace">
       <!-- Top Navigation Bar -->
       <header class="topbar">
@@ -80,85 +84,81 @@
         <div class="topbar-right">
           <div class="status-indicator">
             <div id="connDot" class="status-dot"></div>
-            <span id="connStatus">Ready</span>
+            <span id="connStatus">Not Authenticated</span>
           </div>
           <div class="user-badge">
-            <div class="user-avatar">QA</div>
-            <span id="topUsername">Tenant User</span>
+            <div class="user-avatar" id="avatarInitials">--</div>
+            <div style="display:flex; flex-direction:column; line-height:1.1;">
+              <span id="topUsername" style="font-weight:600;">No Account Selected</span>
+              <span id="topPlatform" style="font-size:10.5px; color:#64748b;">Disconnected</span>
+            </div>
           </div>
         </div>
       </header>
 
-      <!-- Dashboard Body Exactly Fitted -->
+      <!-- 3. VIEWS CONTAINER -->
       <main class="dashboard-body">
-        <!-- Page Title & Subtitle -->
-        <div class="dashboard-title-row">
-          <div>
-            <h2 class="dashboard-heading">Dynamic Tag Automation</h2>
-            <p class="dashboard-subtext">Manage asset taxonomy, QQL rules, and parent hierarchies across your Qualys subscription</p>
-          </div>
-          <button id="refreshBtn" class="btn-qualys-outline" style="padding: 4px 10px; font-size: 11.5px;">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M23 4v6h-6"></path>
-              <path d="M1 20v-6h6"></path>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-            Refresh Catalog
-          </button>
-        </div>
 
-        <!-- 4 Stat Cards Row (Exact Match to Qualys Screenshot Layout) -->
-        <div class="metric-cards-row">
-          <div class="metric-card">
-            <div class="metric-header">
-              <span>Total Planned Tags</span>
-              <span style="color:#0284c7;">🏷️</span>
-            </div>
-            <div id="statPlanned" class="metric-value">58</div>
-            <div class="metric-footer">9 parent hierarchies configured</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-header">
-              <span>Created (New)</span>
-              <span style="color:#16a34a;">✓</span>
-            </div>
-            <div id="statCreated" class="metric-value" style="color:#16a34a;">0</div>
-            <div class="metric-footer">Added to tenant subscription</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-header">
-              <span>Reused (Existing)</span>
-              <span style="color:#7c3aed;">⟳</span>
-            </div>
-            <div id="statReused" class="metric-value" style="color:#7c3aed;">0</div>
-            <div class="metric-footer">Existing rules preserved</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-header">
-              <span>Execution Failures</span>
-              <span style="color:#dc2626;">⚠</span>
-            </div>
-            <div id="statFailed" class="metric-value" style="color:#dc2626;">0</div>
-            <div class="metric-footer">Review logs below for details</div>
-          </div>
-        </div>
-
-        <!-- Content Area: Left Config + Right Tags Table & Console -->
-        <div class="content-grid">
-          <!-- Left Controller Panel -->
-          <aside class="config-card">
+        <!-- VIEW 1: DASHBOARD / EXECUTION VIEW -->
+        <section id="dashboardView" class="view-panel active-view">
+          <div class="dashboard-title-row">
             <div>
-              <div class="card-title">
-                <span>Tenant Configuration</span>
-                <span style="font-size:10px; font-weight:normal; color:#64748b;">API 2.0</span>
-              </div>
+              <h2 class="dashboard-heading">Dynamic Tag Automation</h2>
+              <p class="dashboard-subtext">Select specific parent/child tags to deploy into your currently authenticated Qualys tenant.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button id="selectAllBtn" class="btn-qualys-outline" style="padding: 5px 11px; font-size: 11.5px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Select All
+              </button>
+              <button id="deselectAllBtn" class="btn-qualys-outline" style="padding: 5px 11px; font-size: 11.5px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Deselect All
+              </button>
+              <button id="refreshBtn" class="btn-qualys-outline" style="padding: 5px 11px; font-size: 11.5px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                Reset Session
+              </button>
+            </div>
+          </div>
 
-              <div class="form-field">
+          <!-- Single Top Row: Unified Tag Counter Tile + Tenant Configuration -->
+          <div class="top-overview-row">
+            <!-- 1. Combined Tags & Parents Metric Tile -->
+            <div class="catalog-stats-tile">
+              <div class="catalog-stats-header">
+                <span>Tag Inventory</span>
+                <span>🏷️</span>
+              </div>
+              <div class="catalog-stats-counts">
+                <div class="stat-num-group">
+                  <span id="statOverallParents" class="stat-large-val">0</span>
+                  <span class="stat-label-sub">Parents</span>
+                </div>
+                <span style="color:#cbd5e1; font-size:18px;">/</span>
+                <div class="stat-num-group">
+                  <span id="statOverallChildren" class="stat-large-val">0</span>
+                  <span class="stat-label-sub">Total Tags</span>
+                </div>
+                <div class="stat-num-group" style="margin-left: 6px; border-left: 1px solid #e2e8f0; padding-left: 8px;">
+                  <span id="statSelected" class="stat-large-val" style="color:#0284c7;">0</span>
+                  <span class="stat-label-sub">Selected</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Horizontal Tenant Configuration Controls -->
+            <div class="tenant-horizontal-card">
+              <div class="inline-form-group">
                 <label for="platformSelect">Platform (POD)</label>
-                <select id="platformSelect" class="form-select">
+                <select id="platformSelect" class="inline-form-select">
                   <option value="US1">US1 (qualysapi.qualys.com)</option>
                   <option value="US2" selected>US2 (qualysapi.qg2.apps.qualys.com)</option>
                   <option value="US3">US3 (qualysapi.qg3.apps.qualys.com)</option>
@@ -175,90 +175,401 @@
                 </select>
               </div>
 
-              <div class="form-field">
+              <div class="inline-form-group">
                 <label for="usernameInput">API Username</label>
-                <input type="text" id="usernameInput" class="form-input" placeholder="e.g. testq2st5" value="testq2st5">
+                <input type="text" id="usernameInput" class="inline-form-input" placeholder="e.g. testq2st5" value="testq2st5">
               </div>
 
-              <div class="form-field">
+              <div class="inline-form-group">
                 <label for="passwordInput">API Password</label>
-                <input type="password" id="passwordInput" class="form-input" placeholder="••••••••••••">
+                <div class="password-input-wrapper">
+                  <input type="password" id="passwordInput" class="inline-form-input" placeholder="Password">
+                  <button type="button" id="togglePasswordBtn" class="pwd-toggle-btn" title="Show or hide password" aria-label="Toggle password visibility">
+                    <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </button>
+                </div>
               </div>
 
-              <label class="dry-run-toggle">
+              <label class="inline-dry-run">
                 <input type="checkbox" id="dryRunCheckbox" checked>
-                <span><strong>Dry Run Mode</strong> (Preview only)</span>
+                <span>Dry Run Mode</span>
               </label>
+
+              <div class="inline-actions">
+                <button id="testAuthBtn" class="btn-qualys-outline">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="7.5" cy="15.5" r="5.5"></circle>
+                    <path d="m21 2-9.6 9.6"></path>
+                    <path d="m15.5 7.5 3 3"></path>
+                  </svg>
+                  Connect
+                </button>
+                <button id="executeBtn" class="btn-qualys-primary">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                  Deploy Tags
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dedicated Execution Progress & Live Stats Tile (Collapsible & Dismissible) -->
+          <div id="executionBanner" class="execution-banner" style="display: none;">
+            <div class="banner-top-row">
+              <div class="banner-left" id="bannerToggleHeader" style="cursor: pointer;" title="Click to view/hide tag details">
+                <span id="bannerToggleIcon" class="banner-toggle-icon">▼</span>
+                <div class="banner-text-group">
+                  <span id="progressText" class="banner-title">Deploying tags...</span>
+                  <span id="bannerSubtitle" class="banner-subtitle">Initializing session</span>
+                </div>
+              </div>
+              <div class="banner-center">
+                <div class="banner-track">
+                  <div id="progressFill" class="banner-fill"></div>
+                </div>
+                <span id="progressPercent" class="banner-pct">0%</span>
+              </div>
+              <div id="bannerStatsGroup" class="banner-stats-group">
+                <span id="statSuccessBadge" class="banner-stat-badge success">✓ 0 Created</span>
+                <span id="statReusedBadge" class="banner-stat-badge reused">⟳ 0 Reused</span>
+                <span id="statFailedBadge" class="banner-stat-badge failed" style="display:none;">⚠ 0 Failed</span>
+                <button type="button" id="bannerCloseBtn" class="banner-close-btn" title="Dismiss this notification" aria-label="Dismiss">
+                  ✕
+                </button>
+              </div>
             </div>
 
-            <div class="action-buttons">
-              <button id="testAuthBtn" class="btn-qualys-outline">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
-                </svg>
-                Test Connection
-              </button>
-              <button id="executeBtn" class="btn-qualys-primary">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                Execute Setup
-              </button>
-              <button id="exportReportBtn" class="btn-qualys-outline" style="font-size:11.5px;">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Export JSON Report
-              </button>
+            <!-- Collapsible Detailed Breakdown Drawer -->
+            <div id="bannerDetailsDrawer" class="banner-details-drawer">
+              <div class="banner-drawer-toolbar">
+                <span style="font-size: 11px; font-weight: 600; color: #475569;">Operation Breakdown</span>
+                <div style="display: flex; gap: 6px;">
+                  <button type="button" class="drawer-filter-pill active" data-filter="ALL">All Items</button>
+                  <button type="button" class="drawer-filter-pill" data-filter="created">Created</button>
+                  <button type="button" class="drawer-filter-pill" data-filter="reused">Reused</button>
+                  <button type="button" class="drawer-filter-pill" data-filter="failed">Failed</button>
+                </div>
+              </div>
+              <div class="banner-drawer-table-wrapper">
+                <table class="qualys-table" style="font-size: 11px;">
+                  <thead>
+                    <tr>
+                      <th style="width: 70px;">Type</th>
+                      <th>Tag Name</th>
+                      <th>Category / Parent</th>
+                      <th style="width: 80px; text-align: center;">Criticality</th>
+                      <th style="width: 90px; text-align: center;">Outcome</th>
+                      <th>Details / Response</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bannerDetailsTableBody">
+                    <!-- Populated dynamically as operations proceed -->
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </aside>
+          </div>
 
-          <!-- Right Stack: Tag Hierarchy Table + Activity Log -->
-          <div class="main-tables-stack">
-            <!-- Table Card -->
-            <div class="tags-card">
+          <!-- Full Width Table Workspace & Retractable Bottom Drawer -->
+          <div class="table-workspace">
+            <!-- Full Width Selectable Tags Table -->
+            <div class="tags-card" style="flex: 1;">
               <div class="card-toolbar">
                 <div id="categoryPills" class="category-pills"></div>
-                <!-- Inline progress indicator -->
-                <div id="inlineProgress" class="inline-progress">
-                  <span id="progressText">Processing...</span>
-                  <div class="inline-track">
-                    <div id="progressFill" class="inline-fill"></div>
-                  </div>
-                  <span id="progressPercent">0%</span>
-                </div>
               </div>
 
               <div class="table-container">
                 <table class="qualys-table">
                   <thead>
                     <tr>
-                      <th style="width: 240px;">Tag Name</th>
+                      <th style="width: 38px; text-align: center;">
+                        <input type="checkbox" id="headerCheckbox" checked title="Select/Deselect All Visible">
+                      </th>
+                      <th style="width: 290px;">Tag Name</th>
                       <th>QQL Dynamic Rule</th>
-                      <th style="width: 75px; text-align: center;">Criticality</th>
-                      <th style="width: 95px; text-align: right;">Status</th>
+                      <th style="width: 85px; text-align: center;">Criticality</th>
                     </tr>
                   </thead>
                   <tbody id="tagTableBody">
-                    <!-- Populated dynamically -->
+                    <!-- Populated dynamically with checkboxes -->
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <!-- Console Log Output Card -->
-            <div class="console-card">
-              <div class="console-header">
-                <span>Running & Recent Activity</span>
-                <span id="logSummary" style="color:#64748b; font-size:11px;">0 events logged</span>
+            <!-- Retractable Bottom Console Drawer -->
+            <div id="retractableConsole" class="retractable-console">
+              <div class="console-header-bar" id="consoleToggleBar">
+                <div class="console-header-title">
+                  <span>📟 Running & Recent Activity</span>
+                  <span id="logSummary" style="color:#64748b; font-size:11px; font-weight:normal;">0 events</span>
+                  <span id="drawerFailCounter" class="badge-status failed" style="display:none; font-size:10px; padding:1px 6px;">0 Failures</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <button id="clearLogsBtn" class="btn-qualys-outline" style="padding: 3px 8px; font-size: 11px;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Clear
+                  </button>
+                  <button class="retract-toggle-btn" id="toggleDrawerBtn">
+                    <span id="drawerArrow">▲</span> Expand Console
+                  </button>
+                </div>
               </div>
               <div id="consoleLogs" class="console-output"></div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <!-- VIEW 2: TAGS CATALOG (Create, Add, Remove, Modify Parent Tags & Tags) -->
+        <section id="tagsCatalogView" class="view-panel">
+          <div class="dashboard-title-row">
+            <div>
+              <h2 class="dashboard-heading">Tags Catalog Management</h2>
+              <p class="dashboard-subtext">Add, modify, or remove parent categories and child dynamic tags for this session.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button id="openNewParentModalBtn" class="btn-qualys-outline">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                New Parent Tag
+              </button>
+              <button id="openNewChildModalBtn" class="btn-qualys-primary">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                New Dynamic Child Tag
+              </button>
+            </div>
+          </div>
+
+          <div class="tags-card" style="flex: 1; margin-top: 10px;">
+            <div class="card-toolbar">
+              <span style="font-weight:600; font-size:12px;">Defined Tag Catalog</span>
+              <button id="resetDefaultCatalogBtn" class="btn-qualys-outline">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                  <path d="M3 3v5h5"></path>
+                </svg>
+                Reset to Factory Defaults
+              </button>
+            </div>
+            <div class="table-container">
+              <table class="qualys-table">
+                <thead>
+                  <tr>
+                    <th style="width: 280px;">Tag Name</th>
+                    <th>QQL Rule Text</th>
+                    <th style="width: 85px; text-align: center;">Criticality</th>
+                    <th style="width: 150px; text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="catalogTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 4: API SETTINGS -->
+        <section id="apiSettingsView" class="view-panel">
+          <div class="dashboard-title-row">
+            <div>
+              <h2 class="dashboard-heading">Qualys API Settings</h2>
+              <p class="dashboard-subtext">Review endpoints, request timeout thresholds, and platform URLs for your Qualys tenant.</p>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; min-height: 0; margin-top: 10px;">
+            <div class="metric-card" style="justify-content: flex-start; gap: 14px;">
+              <div class="card-title">Endpoint & Session Parameters</div>
+              <div class="form-field">
+                <label>API Version</label>
+                <input type="text" class="form-input" value="Qualys API 2.0 (REST/XML)" disabled>
+              </div>
+              <div class="form-field">
+                <label>HTTP Headers</label>
+                <input type="text" class="form-input" value="X-Requested-With: Qualys Local Server" disabled>
+              </div>
+              <div class="form-field">
+                <label>Authentication Scheme</label>
+                <input type="text" class="form-input" value="HTTP Basic Authentication (Stateless - Never saved to disk)" disabled>
+              </div>
+              <div class="form-field">
+                <label>Request Timeout</label>
+                <input type="text" class="form-input" value="30 seconds per call" disabled>
+              </div>
+            </div>
+
+            <div class="metric-card" style="justify-content: flex-start; gap: 10px; overflow-y:auto;">
+              <div class="card-title">Configured Platform Base URLs</div>
+              <table class="qualys-table" style="font-size:11px;">
+                <thead>
+                  <tr>
+                    <th>POD</th>
+                    <th>Base API URL</th>
+                  </tr>
+                </thead>
+                <tbody id="apiPlatformsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 5: ACTIVITY LOGS -->
+        <section id="logsView" class="view-panel">
+          <div class="dashboard-title-row">
+            <div>
+              <h2 class="dashboard-heading">Session & Activity Logs</h2>
+              <p class="dashboard-subtext">Comprehensive audit trail of authenticated user sessions, API calls, and tag automation actions.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button id="viewClearLogsBtn" class="btn-qualys-outline">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                Clear Logs
+              </button>
+              <button id="viewCopyLogsBtn" class="btn-qualys-outline">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy All
+              </button>
+            </div>
+          </div>
+
+          <!-- Top Session Summary Cards -->
+          <div class="logs-summary-bar">
+            <div class="log-stat-card">
+              <span class="log-stat-label">Active Account</span>
+              <span id="logUserAccount" class="log-stat-value">Not Authenticated</span>
+            </div>
+            <div class="log-stat-card">
+              <span class="log-stat-label">Platform POD</span>
+              <span id="logUserPod" class="log-stat-value">—</span>
+            </div>
+            <div class="log-stat-card">
+              <span class="log-stat-label">Total Operations</span>
+              <span id="logTotalCount" class="log-stat-value">0</span>
+            </div>
+            <div class="log-stat-card">
+              <span class="log-stat-label">Successful</span>
+              <span id="logSuccessCount" class="log-stat-value" style="color:#16a34a;">0</span>
+            </div>
+            <div class="log-stat-card">
+              <span class="log-stat-label">Failures</span>
+              <span id="logFailCount" class="log-stat-value" style="color:#dc2626;">0</span>
+            </div>
+          </div>
+
+          <!-- Logs Table Container -->
+          <div class="logs-feed-container">
+            <div class="logs-feed-toolbar">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="text" id="logSearchInput" class="inline-form-input" style="width:260px;" placeholder="Filter logs by keyword, user, action...">
+                <button type="button" class="pill-btn active log-filter-btn" data-type="ALL">All Events</button>
+                <button type="button" class="pill-btn log-filter-btn" data-type="auth">Auth</button>
+                <button type="button" class="pill-btn log-filter-btn" data-type="tag">Tag Actions</button>
+                <button type="button" class="pill-btn log-filter-btn" data-type="error">Errors & Warnings</button>
+              </div>
+              <div class="logs-timezone-indicator">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Timestamp Zone: <strong>IST (UTC+05:30)</strong></span>
+              </div>
+            </div>
+            <div class="table-container" style="background:#ffffff;">
+              <table class="qualys-table">
+                <thead>
+                  <tr>
+                    <th style="width: 195px;">Timestamp (IST)</th>
+                    <th style="width: 140px;">User Logged In</th>
+                    <th style="width: 95px; text-align: center;">POD Used</th>
+                    <th style="width: 130px;">Action Type</th>
+                    <th>Changes Made & Operational Details</th>
+                    <th style="width: 95px; text-align: center;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="logsDetailedFeed">
+                  <!-- Rendered structured audit rows -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
       </main>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD PARENT TAG -->
+  <div id="parentModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="parentModalTitle">Create Parent Tag</h3>
+        <button class="modal-close" id="closeParentModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-field">
+          <label>Parent Tag Name *</label>
+          <input type="text" id="newParentName" class="form-input" placeholder="e.g. Compliance: PCI-DSS">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelParentBtn" class="btn-qualys-outline">Cancel</button>
+        <button id="saveParentBtn" class="btn-qualys-primary">Add Parent Tag</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT CHILD TAG -->
+  <div id="childModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="childModalTitle">Create Dynamic Child Tag</h3>
+        <button class="modal-close" id="closeChildModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-field">
+          <label>Parent Tag Category *</label>
+          <select id="childParentSelect" class="form-select"></select>
+        </div>
+        <div class="form-field">
+          <label>Tag Name *</label>
+          <input type="text" id="childTagName" class="form-input" placeholder="e.g. OS: macOS Monterey">
+        </div>
+        <div class="form-field">
+          <label>Dynamic Rule (QQL Query) *</label>
+          <input type="text" id="childTagQql" class="form-input" placeholder="e.g. operatingSystem.category1:`MacOS`">
+        </div>
+        <div class="form-field">
+          <label>Criticality Score (1 to 5)</label>
+          <select id="childTagCriticality" class="form-select">
+            <option value="1">1 - Minimal</option>
+            <option value="2">2 - Low</option>
+            <option value="3" selected>3 - Medium</option>
+            <option value="4">4 - High</option>
+            <option value="5">5 - Critical</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelChildBtn" class="btn-qualys-outline">Cancel</button>
+        <button id="saveChildBtn" class="btn-qualys-primary">Save Tag</button>
+      </div>
     </div>
   </div>
 
