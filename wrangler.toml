@@ -1,0 +1,7 @@
+name = "qualys-automation"
+compatibility_date = "2024-09-23"
+main = "tagging/worker.js"
+
+[assets]
+directory = "tagging/public"
+binding = "ASSETS"
