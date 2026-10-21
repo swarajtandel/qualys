@@ -3,141 +3,260 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Qualys Dynamic Tag Manager | Cloudflare Pages</title>
-  <meta name="description" content="Automate and visualize Qualys Asset Inventory dynamic tags with Cloudflare Pages and Workers.">
+  <title>Qualys Dynamic Tag Assistant | Asset Inventory</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="index.css">
 </head>
 <body>
-  <div class="app-container">
-    <!-- Header -->
-    <header class="header">
-      <div class="brand">
-        <div class="brand-icon">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+  <div class="app-layout">
+    <!-- 1. LEFT SIDEBAR (Qualys Red Enterprise Nav) -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-section">
+          <div class="qualys-logo-badge">Q</div>
+          <div class="brand-text">
+            <h1>QUALYS</h1>
+            <span>Tag Assistant</span>
+          </div>
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-item active">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Dashboard</span>
+          </li>
+          <li class="nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+              <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            <span>Asset Tags</span>
+          </li>
+          <li class="nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>API Settings</span>
+          </li>
+          <li class="nav-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>QQL Catalog</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-footer">
+        <div>API Version 2.0</div>
+        <div style="color:#94a3b8; font-size:10px; margin-top:2px;">Cloudflare Edge Edition</div>
+      </div>
+    </aside>
+
+    <!-- 2. MAIN WORKSPACE (Fitted to 100vh) -->
+    <div class="workspace">
+      <!-- Top Navigation Bar -->
+      <header class="topbar">
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-        </div>
-        <div>
-          <h1 class="brand-title">Qualys Tag Orchestrator</h1>
-          <p class="brand-subtitle">Serverless Dynamic Asset Tagging via Cloudflare Edge</p>
-        </div>
-      </div>
-      <div class="header-badges">
-        <span class="badge edge">⚡ Cloudflare Edge</span>
-        <span class="badge qualys">🛡️ Qualys API 2.0</span>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <div class="main-grid">
-      <!-- Left Column: Controls & Configuration -->
-      <aside class="glass-panel">
-        <div class="panel-header">
-          <h2 class="panel-title">⚙️ Tenant & Credentials</h2>
+          <input type="text" id="tagSearchInput" placeholder="Filter tags or QQL query... (Ctrl + K)">
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="platformSelect">Qualys Platform (POD)</label>
-          <select id="platformSelect" class="form-control">
-            <option value="US1">US1 (qualysapi.qualys.com)</option>
-            <option value="US2" selected>US2 (qualysapi.qg2.apps.qualys.com)</option>
-            <option value="US3">US3 (qualysapi.qg3.apps.qualys.com)</option>
-            <option value="US4">US4 (qualysapi.qg4.apps.qualys.com)</option>
-            <option value="EU1">EU1 (qualysapi.qualys.eu)</option>
-            <option value="EU2">EU2 (qualysapi.qg2.apps.qualys.eu)</option>
-            <option value="EU3">EU3 (qualysapi.qg3.apps.qualys.it)</option>
-            <option value="UK">UK (qualysapi.qg1.apps.qualys.co.uk)</option>
-            <option value="IN">IN (qualysapi.qg1.apps.qualys.in)</option>
-            <option value="CA">CA (qualysapi.qg1.apps.qualys.ca)</option>
-            <option value="AE">AE (qualysapi.qg1.apps.qualys.ae)</option>
-            <option value="AU">AU (qualysapi.qg1.apps.qualys.com.au)</option>
-            <option value="KSA">KSA (qualysapi.qg1.apps.qualysksa.com)</option>
-          </select>
+        <div class="topbar-right">
+          <div class="status-indicator">
+            <div id="connDot" class="status-dot"></div>
+            <span id="connStatus">Ready</span>
+          </div>
+          <div class="user-badge">
+            <div class="user-avatar">QA</div>
+            <span id="topUsername">Tenant User</span>
+          </div>
         </div>
+      </header>
 
-        <div class="form-group">
-          <label class="form-label" for="usernameInput">API Username</label>
-          <input type="text" id="usernameInput" class="form-control" placeholder="e.g. testq2st5" autocomplete="username">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="passwordInput">API Password</label>
-          <input type="password" id="passwordInput" class="form-control" placeholder="••••••••••••" autocomplete="current-password">
-        </div>
-
-        <div class="form-group">
-          <label class="checkbox-label">
-            <input type="checkbox" id="dryRunCheckbox" checked>
-            <span><strong>Dry Run Mode</strong> (Simulate without creating tags in tenant)</span>
-          </label>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-          <button id="testAuthBtn" class="btn btn-secondary">
-            <span>🔑</span> Test Connection
-          </button>
-          <button id="executeBtn" class="btn btn-primary">
-            <span>🚀</span> Start Tag Setup
-          </button>
-          <button id="exportReportBtn" class="btn btn-secondary">
-            <span>📥</span> Download Report JSON
+      <!-- Dashboard Body Exactly Fitted -->
+      <main class="dashboard-body">
+        <!-- Page Title & Subtitle -->
+        <div class="dashboard-title-row">
+          <div>
+            <h2 class="dashboard-heading">Dynamic Tag Automation</h2>
+            <p class="dashboard-subtext">Manage asset taxonomy, QQL rules, and parent hierarchies across your Qualys subscription</p>
+          </div>
+          <button id="refreshBtn" class="btn-qualys-outline" style="padding: 4px 10px; font-size: 11.5px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            Refresh Catalog
           </button>
         </div>
-      </aside>
 
-      <!-- Right Column: Dashboard & Execution -->
-      <main style="display: flex; flex-direction: column; gap: 20px;">
-        <!-- Realtime Stats -->
-        <div class="stats-row">
-          <div class="stat-box">
-            <div id="statPlanned" class="stat-value stat-planned">0</div>
-            <div class="stat-label">Planned Tags</div>
+        <!-- 4 Stat Cards Row (Exact Match to Qualys Screenshot Layout) -->
+        <div class="metric-cards-row">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Total Planned Tags</span>
+              <span style="color:#0284c7;">🏷️</span>
+            </div>
+            <div id="statPlanned" class="metric-value">58</div>
+            <div class="metric-footer">9 parent hierarchies configured</div>
           </div>
-          <div class="stat-box">
-            <div id="statCreated" class="stat-value stat-created">0</div>
-            <div class="stat-label">Created</div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Created (New)</span>
+              <span style="color:#16a34a;">✓</span>
+            </div>
+            <div id="statCreated" class="metric-value" style="color:#16a34a;">0</div>
+            <div class="metric-footer">Added to tenant subscription</div>
           </div>
-          <div class="stat-box">
-            <div id="statReused" class="stat-value stat-reused">0</div>
-            <div class="stat-label">Reused (Found)</div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Reused (Existing)</span>
+              <span style="color:#7c3aed;">⟳</span>
+            </div>
+            <div id="statReused" class="metric-value" style="color:#7c3aed;">0</div>
+            <div class="metric-footer">Existing rules preserved</div>
           </div>
-          <div class="stat-box">
-            <div id="statFailed" class="stat-value stat-failed">0</div>
-            <div class="stat-label">Failed</div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span>Execution Failures</span>
+              <span style="color:#dc2626;">⚠</span>
+            </div>
+            <div id="statFailed" class="metric-value" style="color:#dc2626;">0</div>
+            <div class="metric-footer">Review logs below for details</div>
           </div>
         </div>
 
-        <!-- Progress Bar -->
-        <div id="progressContainer" class="progress-container">
-          <div class="progress-header">
-            <span id="progressText">Processing tags...</span>
-            <span id="progressPercent">0%</span>
-          </div>
-          <div class="progress-track">
-            <div id="progressFill" class="progress-fill"></div>
-          </div>
-        </div>
+        <!-- Content Area: Left Config + Right Tags Table & Console -->
+        <div class="content-grid">
+          <!-- Left Controller Panel -->
+          <aside class="config-card">
+            <div>
+              <div class="card-title">
+                <span>Tenant Configuration</span>
+                <span style="font-size:10px; font-weight:normal; color:#64748b;">API 2.0</span>
+              </div>
 
-        <!-- Tag Explorer Panel -->
-        <div class="glass-panel" style="padding: 20px;">
-          <div class="panel-header" style="margin-bottom: 14px;">
-            <h2 class="panel-title">🏷️ Tag Hierarchy & QQL Rules</h2>
-          </div>
-          <!-- Filter Tabs -->
-          <div id="tabFilter" class="tabs"></div>
-          <!-- Tree / Table -->
-          <div id="tagTree" class="tag-tree-container"></div>
-        </div>
+              <div class="form-field">
+                <label for="platformSelect">Platform (POD)</label>
+                <select id="platformSelect" class="form-select">
+                  <option value="US1">US1 (qualysapi.qualys.com)</option>
+                  <option value="US2" selected>US2 (qualysapi.qg2.apps.qualys.com)</option>
+                  <option value="US3">US3 (qualysapi.qg3.apps.qualys.com)</option>
+                  <option value="US4">US4 (qualysapi.qg4.apps.qualys.com)</option>
+                  <option value="EU1">EU1 (qualysapi.qualys.eu)</option>
+                  <option value="EU2">EU2 (qualysapi.qg2.apps.qualys.eu)</option>
+                  <option value="EU3">EU3 (qualysapi.qg3.apps.qualys.it)</option>
+                  <option value="UK">UK (qualysapi.qg1.apps.qualys.co.uk)</option>
+                  <option value="IN">IN (qualysapi.qg1.apps.qualys.in)</option>
+                  <option value="CA">CA (qualysapi.qg1.apps.qualys.ca)</option>
+                  <option value="AE">AE (qualysapi.qg1.apps.qualys.ae)</option>
+                  <option value="AU">AU (qualysapi.qg1.apps.qualys.com.au)</option>
+                  <option value="KSA">KSA (qualysapi.qg1.apps.qualysksa.com)</option>
+                </select>
+              </div>
 
-        <!-- Real-time Activity Logs -->
-        <div class="glass-panel" style="padding: 20px;">
-          <div class="panel-header" style="margin-bottom: 12px;">
-            <h2 class="panel-title">📟 Execution Log Console</h2>
+              <div class="form-field">
+                <label for="usernameInput">API Username</label>
+                <input type="text" id="usernameInput" class="form-input" placeholder="e.g. testq2st5" value="testq2st5">
+              </div>
+
+              <div class="form-field">
+                <label for="passwordInput">API Password</label>
+                <input type="password" id="passwordInput" class="form-input" placeholder="••••••••••••">
+              </div>
+
+              <label class="dry-run-toggle">
+                <input type="checkbox" id="dryRunCheckbox" checked>
+                <span><strong>Dry Run Mode</strong> (Preview only)</span>
+              </label>
+            </div>
+
+            <div class="action-buttons">
+              <button id="testAuthBtn" class="btn-qualys-outline">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                </svg>
+                Test Connection
+              </button>
+              <button id="executeBtn" class="btn-qualys-primary">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Execute Setup
+              </button>
+              <button id="exportReportBtn" class="btn-qualys-outline" style="font-size:11.5px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export JSON Report
+              </button>
+            </div>
+          </aside>
+
+          <!-- Right Stack: Tag Hierarchy Table + Activity Log -->
+          <div class="main-tables-stack">
+            <!-- Table Card -->
+            <div class="tags-card">
+              <div class="card-toolbar">
+                <div id="categoryPills" class="category-pills"></div>
+                <!-- Inline progress indicator -->
+                <div id="inlineProgress" class="inline-progress">
+                  <span id="progressText">Processing...</span>
+                  <div class="inline-track">
+                    <div id="progressFill" class="inline-fill"></div>
+                  </div>
+                  <span id="progressPercent">0%</span>
+                </div>
+              </div>
+
+              <div class="table-container">
+                <table class="qualys-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 240px;">Tag Name</th>
+                      <th>QQL Dynamic Rule</th>
+                      <th style="width: 75px; text-align: center;">Criticality</th>
+                      <th style="width: 95px; text-align: right;">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tagTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Console Log Output Card -->
+            <div class="console-card">
+              <div class="console-header">
+                <span>Running & Recent Activity</span>
+                <span id="logSummary" style="color:#64748b; font-size:11px;">0 events logged</span>
+              </div>
+              <div id="consoleLogs" class="console-output"></div>
+            </div>
           </div>
-          <div id="consoleLogs" class="console-box"></div>
         </div>
       </main>
     </div>

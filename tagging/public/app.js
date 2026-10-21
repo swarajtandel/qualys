@@ -1,10 +1,14 @@
 /**
- * Qualys Tag Setup Dashboard - Cloudflare Workers Client
+ * Qualys Tag Setup Dashboard - Cloudflare Client
+ * Designed for single-page viewport fitting and real-time execution.
  */
 
 let catalog = { parents: {}, platforms: [], skipped: [] };
 let tagState = {};
 let isProcessing = false;
+let logCount = 0;
+let currentFilter = "ALL";
+let searchQuery = "";
 
 // DOM Elements
 const platformSelect = document.getElementById("platformSelect");
@@ -14,28 +18,37 @@ const dryRunCheckbox = document.getElementById("dryRunCheckbox");
 const testAuthBtn = document.getElementById("testAuthBtn");
 const executeBtn = document.getElementById("executeBtn");
 const exportReportBtn = document.getElementById("exportReportBtn");
+const refreshBtn = document.getElementById("refreshBtn");
+const tagSearchInput = document.getElementById("tagSearchInput");
 
 const statPlanned = document.getElementById("statPlanned");
 const statCreated = document.getElementById("statCreated");
 const statReused = document.getElementById("statReused");
 const statFailed = document.getElementById("statFailed");
 
-const progressContainer = document.getElementById("progressContainer");
+const inlineProgress = document.getElementById("inlineProgress");
 const progressText = document.getElementById("progressText");
 const progressPercent = document.getElementById("progressPercent");
 const progressFill = document.getElementById("progressFill");
 
-const tagTree = document.getElementById("tagTree");
+const tagTableBody = document.getElementById("tagTableBody");
+const categoryPills = document.getElementById("categoryPills");
 const consoleLogs = document.getElementById("consoleLogs");
-const tabFilter = document.getElementById("tabFilter");
+const logSummary = document.getElementById("logSummary");
 
-// Logging helper
+const connDot = document.getElementById("connDot");
+const connStatus = document.getElementById("connStatus");
+const topUsername = document.getElementById("topUsername");
+
+// Logging
 function log(msg, type = "info") {
+  logCount++;
+  logSummary.textContent = `${logCount} events logged`;
   const time = new Date().toLocaleTimeString();
-  const entry = document.createElement("div");
-  entry.className = "log-entry";
-  entry.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-${type}">${escapeHtml(msg)}</span>`;
-  consoleLogs.appendChild(entry);
+  const line = document.createElement("div");
+  line.className = "log-line";
+  line.innerHTML = `<span class="log-time">[${time}]</span><span class="log-${type}">${escapeHtml(msg)}</span>`;
+  consoleLogs.appendChild(line);
   consoleLogs.scrollTop = consoleLogs.scrollHeight;
 }
 
@@ -44,15 +57,30 @@ function escapeHtml(str) {
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// Fetch Catalog from Worker
+function slug(name) {
+  return name.replace(/[^a-zA-Z0-9]/g, "_");
+}
+
+// Update Top Username
+usernameInput.addEventListener("input", (e) => {
+  topUsername.textContent = e.target.value.trim() || "Tenant User";
+});
+
+// Search input
+tagSearchInput.addEventListener("input", (e) => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  renderTable();
+});
+
+// Load Catalog
 async function loadCatalog() {
   try {
-    log("Loading tag catalog and platform definitions from edge worker...", "info");
+    log("Fetching dynamic tag catalog and platform POD list...", "info");
     const res = await fetch("/api/catalog");
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     catalog = await res.json();
 
-    // Populate Platform Dropdown
+    // Fill Platform Select
     platformSelect.innerHTML = "";
     catalog.platforms.forEach((plat) => {
       const opt = document.createElement("option");
@@ -62,18 +90,129 @@ async function loadCatalog() {
       platformSelect.appendChild(opt);
     });
 
-    renderTabs();
-    renderTagTree();
+    renderPills();
+    initTagState();
+    renderTable();
     updateStats();
-    log(`Loaded ${Object.keys(catalog.parents).length} parent categories with ${getTotalChildren()} tags.`, "success");
+    log(`Loaded ${Object.keys(catalog.parents).length} categories with ${getTotalChildren()} dynamic tags.`, "success");
   } catch (err) {
-    log(`Failed to fetch catalog: ${err.message}. Using offline fallback.`, "warning");
+    log(`Failed to fetch catalog from /api/catalog: ${err.message}. Using built-in rules.`, "warning");
     initFallbackCatalog();
   }
 }
 
 function getTotalChildren() {
   return Object.values(catalog.parents).reduce((acc, curr) => acc + curr.length, 0);
+}
+
+function initTagState() {
+  tagState = {};
+  Object.entries(catalog.parents).forEach(([parentName, children]) => {
+    tagState[parentName] = { kind: "parent", status: "planned", id: null };
+    children.forEach((child) => {
+      tagState[child.name] = {
+        kind: "child",
+        parent: parentName,
+        qql: child.qql,
+        criticality: child.criticality,
+        status: "planned",
+        id: null,
+      };
+    });
+  });
+}
+
+function renderPills() {
+  categoryPills.innerHTML = `<button class="pill-btn active" data-cat="ALL">All Categories</button>`;
+  Object.keys(catalog.parents).forEach((parentName) => {
+    const btn = document.createElement("button");
+    btn.className = "pill-btn";
+    btn.setAttribute("data-cat", parentName);
+    btn.textContent = parentName.replace("OS Version: ", "").replace("Lifecycle: ", "");
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".pill-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentFilter = parentName;
+      renderTable();
+    });
+    categoryPills.appendChild(btn);
+  });
+
+  categoryPills.querySelector('[data-cat="ALL"]').addEventListener("click", (e) => {
+    document.querySelectorAll(".pill-btn").forEach((b) => b.classList.remove("active"));
+    e.target.classList.add("active");
+    currentFilter = "ALL";
+    renderTable();
+  });
+}
+
+function renderTable() {
+  tagTableBody.innerHTML = "";
+
+  Object.entries(catalog.parents).forEach(([parentName, children]) => {
+    if (currentFilter !== "ALL" && currentFilter !== parentName) return;
+
+    // Filter children by search query
+    const matchingChildren = children.filter((c) => {
+      if (!searchQuery) return true;
+      return c.name.toLowerCase().includes(searchQuery) || c.qql.toLowerCase().includes(searchQuery);
+    });
+
+    if (matchingChildren.length === 0 && searchQuery && !parentName.toLowerCase().includes(searchQuery)) {
+      return;
+    }
+
+    // Render Parent Row
+    const pRow = document.createElement("tr");
+    pRow.className = "parent-row";
+    const pState = tagState[parentName] || { status: "planned" };
+    pRow.innerHTML = `
+      <td colspan="2" class="tag-name-cell">
+        <span>📁</span>
+        <strong>${escapeHtml(parentName)}</strong>
+        <span style="font-size:10px; color:#64748b; font-weight:normal; margin-left:6px;">(STATIC Parent Tag)</span>
+      </td>
+      <td style="text-align: center; color: #94a3b8;">—</td>
+      <td style="text-align: right;">
+        <span class="badge-status ${pState.status}" id="status-${slug(parentName)}">${capitalize(pState.status)}</span>
+      </td>
+    `;
+    tagTableBody.appendChild(pRow);
+
+    // Render Children Rows
+    matchingChildren.forEach((child) => {
+      const cState = tagState[child.name] || { status: "planned" };
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td class="tag-name-cell" style="padding-left: 28px;">
+          <span style="color:#94a3b8;">↳</span>
+          <span>${escapeHtml(child.name)}</span>
+        </td>
+        <td>
+          <span class="qql-code" title="${escapeHtml(child.qql)}">${escapeHtml(child.qql)}</span>
+        </td>
+        <td style="text-align: center;">
+          <span class="crit-badge">Crit ${child.criticality}</span>
+        </td>
+        <td style="text-align: right;">
+          <span class="badge-status ${cState.status}" id="status-${slug(child.name)}">${capitalize(cState.status)}</span>
+        </td>
+      `;
+      tagTableBody.appendChild(row);
+    });
+  });
+}
+
+function updateTagStatus(name, status, label) {
+  if (tagState[name]) {
+    tagState[name].status = status;
+  }
+  const el = document.getElementById(`status-${slug(name)}`);
+  if (el) {
+    el.className = `badge-status ${status}`;
+    el.textContent = label || capitalize(status);
+  }
+  updateStats();
 }
 
 function updateStats() {
@@ -95,123 +234,25 @@ function updateStats() {
   statFailed.textContent = failed;
 }
 
-function renderTabs() {
-  tabFilter.innerHTML = `<button class="tab-btn active" data-parent="ALL">All Categories</button>`;
-  Object.keys(catalog.parents).forEach((parentName) => {
-    const btn = document.createElement("button");
-    btn.className = "tab-btn";
-    btn.setAttribute("data-parent", parentName);
-    btn.textContent = parentName.replace("OS Version: ", "").replace("Lifecycle: ", "");
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      filterTree(parentName);
-    });
-    tabFilter.appendChild(btn);
-  });
-
-  tabFilter.querySelector('[data-parent="ALL"]').addEventListener("click", (e) => {
-    document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
-    e.target.classList.add("active");
-    filterTree("ALL");
-  });
-}
-
-function filterTree(selectedParent) {
-  const groups = document.querySelectorAll(".parent-group");
-  groups.forEach((group) => {
-    if (selectedParent === "ALL" || group.getAttribute("data-parent-name") === selectedParent) {
-      group.style.display = "block";
-    } else {
-      group.style.display = "none";
-    }
-  });
-}
-
-function renderTagTree() {
-  tagTree.innerHTML = "";
-  tagState = {};
-
-  Object.entries(catalog.parents).forEach(([parentName, children]) => {
-    const group = document.createElement("div");
-    group.className = "parent-group";
-    group.setAttribute("data-parent-name", parentName);
-
-    // Parent item state
-    tagState[parentName] = { kind: "parent", status: "planned", id: null };
-
-    const header = document.createElement("div");
-    header.className = "parent-title-row";
-    header.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px;">
-        <span>📁 ${escapeHtml(parentName)}</span>
-        <span class="parent-badge">STATIC Parent</span>
-      </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span class="status-badge status-planned" id="status-${slug(parentName)}">Planned</span>
-      </div>
-    `;
-    group.appendChild(header);
-
-    children.forEach((child) => {
-      tagState[child.name] = {
-        kind: "child",
-        parent: parentName,
-        qql: child.qql,
-        criticality: child.criticality,
-        status: "planned",
-        id: null,
-      };
-
-      const row = document.createElement("div");
-      row.className = "child-row";
-      row.innerHTML = `
-        <div class="child-name">↳ ${escapeHtml(child.name)}</div>
-        <div class="child-qql" title="${escapeHtml(child.qql)}">${escapeHtml(child.qql)}</div>
-        <div style="text-align:center;"><span class="crit-badge">Crit ${child.criticality}</span></div>
-        <div style="text-align:right;"><span class="status-badge status-planned" id="status-${slug(child.name)}">Planned</span></div>
-      `;
-      group.appendChild(row);
-    });
-
-    tagTree.appendChild(group);
-  });
-}
-
-function slug(name) {
-  return name.replace(/[^a-zA-Z0-9]/g, "_");
-}
-
-function updateTagStatus(name, status, label) {
-  if (tagState[name]) {
-    tagState[name].status = status;
-  }
-  const el = document.getElementById(`status-${slug(name)}`);
-  if (el) {
-    el.className = `status-badge status-${status}`;
-    el.textContent = label || capitalize(status);
-  }
-  updateStats();
-}
-
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Test Connection Handler
+// Test Connection
 testAuthBtn.addEventListener("click", async () => {
   const platform = platformSelect.value;
   const username = usernameInput.value.trim();
   const password = passwordInput.value;
 
   if (!username || !password) {
-    alert("Please enter your Qualys username and password.");
+    alert("Please provide both API Username and Password.");
     return;
   }
 
   testAuthBtn.disabled = true;
-  testAuthBtn.innerHTML = `Connecting...`;
-  log(`Verifying credentials with Qualys on ${platform}...`, "info");
+  connDot.className = "status-dot active";
+  connStatus.textContent = "Verifying...";
+  log(`Validating credentials with Qualys API 2.0 (${platform})...`, "info");
 
   try {
     const res = await fetch("/api/test-connection", {
@@ -221,22 +262,27 @@ testAuthBtn.addEventListener("click", async () => {
     });
     const result = await res.json();
     if (result.success) {
-      log(`Authentication SUCCESSFUL: Connected to Qualys ${platform} API.`, "success");
-      alert(`Success! Successfully authenticated with Qualys ${platform}.`);
+      connDot.style.background = "#22c55e";
+      connStatus.textContent = "Connected";
+      log(`Authentication Successful on Qualys ${platform}!`, "success");
+      alert(`Success: Connected to Qualys ${platform} API.`);
     } else {
-      log(`Authentication FAILED: ${result.error || result.message}`, "error");
+      connDot.style.background = "#ef4444";
+      connStatus.textContent = "Auth Failed";
+      log(`Authentication Failed: ${result.error || result.message}`, "error");
       alert(`Authentication failed: ${result.error || result.message}`);
     }
   } catch (err) {
-    log(`Network or Worker Error: ${err.message}`, "error");
-    alert(`Could not contact Cloudflare Worker: ${err.message}`);
+    connDot.style.background = "#ef4444";
+    connStatus.textContent = "Network Error";
+    log(`Network error: ${err.message}`, "error");
+    alert(`Could not reach API relay: ${err.message}`);
   } finally {
     testAuthBtn.disabled = false;
-    testAuthBtn.innerHTML = `Test Connection`;
   }
 });
 
-// Run Setup Handler (Dry-run or Live)
+// Execute Setup (Dry-run or Live)
 executeBtn.addEventListener("click", async () => {
   if (isProcessing) return;
 
@@ -246,40 +292,39 @@ executeBtn.addEventListener("click", async () => {
   const isDryRun = dryRunCheckbox.checked;
 
   if (!isDryRun && (!username || !password)) {
-    alert("Please enter Qualys credentials to run live execution.");
+    alert("Enter API username and password to execute live tag creation.");
     return;
   }
 
   if (!isDryRun) {
-    const confirmed = confirm(`Are you sure you want to execute LIVE tag creation on Qualys ${platform}?\n\nThis will create missing parent and child tags in your tenant.`);
+    const confirmed = confirm(`Are you sure you want to execute LIVE tag creation on Qualys ${platform}?\n\nThis will create tags inside your tenant.`);
     if (!confirmed) return;
   }
 
   isProcessing = true;
   executeBtn.disabled = true;
   testAuthBtn.disabled = true;
-  progressContainer.style.display = "block";
+  inlineProgress.style.display = "flex";
 
   const totalSteps = Object.keys(catalog.parents).length + getTotalChildren();
-  let completedSteps = 0;
+  let done = 0;
 
-  log(`Starting execution [Mode: ${isDryRun ? "DRY RUN (Simulation)" : "LIVE"} on ${platform}]...`, isDryRun ? "warning" : "info");
+  log(`Beginning execution [Mode: ${isDryRun ? "DRY RUN (Simulation)" : "LIVE"} on ${platform}]...`, isDryRun ? "warning" : "info");
 
   const parentIds = {};
 
   try {
-    // Phase 1: Process Parent Tags
+    // 1. Process Parents
     for (const parentName of Object.keys(catalog.parents)) {
-      progressText.textContent = `Processing parent: ${parentName}`;
+      progressText.textContent = `${parentName}`;
       updateTagStatus(parentName, "running", "Checking...");
 
       if (isDryRun) {
-        await sleep(30);
+        await sleep(25);
         parentIds[parentName] = `DRY_PARENT_${slug(parentName)}`;
-        updateTagStatus(parentName, "planned", "Planned");
-        log(`[DRY RUN] Plan parent: ${parentName}`, "info");
+        updateTagStatus(parentName, "planned", "Simulated");
+        log(`[DRY RUN] Parent: ${parentName}`, "info");
       } else {
-        // Find existing or create
         const findRes = await fetch("/api/tag-action", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -296,7 +341,6 @@ executeBtn.addEventListener("click", async () => {
           updateTagStatus(parentName, "reused", "Reused");
           log(`REUSE Parent: ${parentName} (ID: ${findData.existing.id})`, "success");
         } else {
-          // Create parent tag
           const createRes = await fetch("/api/tag-action", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -317,29 +361,27 @@ executeBtn.addEventListener("click", async () => {
           }
         }
       }
-
-      completedSteps++;
-      updateProgress(completedSteps, totalSteps);
+      done++;
+      updateProgress(done, totalSteps);
     }
 
-    // Phase 2: Process Child Tags
+    // 2. Process Children
     for (const [parentName, children] of Object.entries(catalog.parents)) {
       const parentId = parentIds[parentName];
 
       for (const child of children) {
-        progressText.textContent = `Processing: ${child.name}`;
+        progressText.textContent = `${child.name}`;
         updateTagStatus(child.name, "running", "Processing...");
 
         if (isDryRun) {
           await sleep(20);
           updateTagStatus(child.name, "planned", "Simulated");
-          log(`[DRY RUN] Plan child: ${child.name} under ${parentName}`, "info");
+          log(`[DRY RUN] Dynamic Child: ${child.name}`, "info");
         } else {
           if (!parentId) {
             updateTagStatus(child.name, "failed", "No Parent");
-            log(`SKIPPED child ${child.name}: Parent tag unavailable`, "error");
+            log(`SKIPPED child ${child.name}: parent tag missing`, "error");
           } else {
-            // Check if child already exists
             const findRes = await fetch("/api/tag-action", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -355,7 +397,6 @@ executeBtn.addEventListener("click", async () => {
               updateTagStatus(child.name, "reused", "Reused");
               log(`REUSE Child: ${child.name} (ID: ${findData.existing.id})`, "success");
             } else {
-              // Create dynamic child
               const createRes = await fetch("/api/tag-action", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -382,20 +423,19 @@ executeBtn.addEventListener("click", async () => {
             }
           }
         }
-
-        completedSteps++;
-        updateProgress(completedSteps, totalSteps);
+        done++;
+        updateProgress(done, totalSteps);
       }
     }
 
-    log(`Batch execution complete! Reviewed ${completedSteps} tags.`, "success");
+    log(`Batch Execution Finished. Processed ${done} tags.`, "success");
   } catch (err) {
-    log(`Execution interrupted: ${err.message}`, "error");
+    log(`Execution error: ${err.message}`, "error");
   } finally {
     isProcessing = false;
     executeBtn.disabled = false;
     testAuthBtn.disabled = false;
-    progressText.textContent = "Done";
+    progressText.textContent = "Finished";
   }
 });
 
@@ -409,10 +449,10 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Export Report JSON
+// Export JSON Report
 exportReportBtn.addEventListener("click", () => {
   const report = {
-    generatedAt: new Date().toISOString(),
+    exportedAt: new Date().toISOString(),
     platform: platformSelect.value,
     mode: dryRunCheckbox.checked ? "dry-run" : "live",
     tags: tagState,
@@ -421,10 +461,12 @@ exportReportBtn.addEventListener("click", () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `qualys-tags-report-${Date.now()}.json`;
+  a.download = `qualys-tag-setup-${Date.now()}.json`;
   a.click();
   URL.revokeObjectURL(url);
 });
 
-// Initialization
+refreshBtn.addEventListener("click", loadCatalog);
+
+// Start
 loadCatalog();
