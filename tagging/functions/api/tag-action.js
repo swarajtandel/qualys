@@ -13,7 +13,7 @@ export async function onRequestPost(context) {
     const headers = {
       "Authorization": `Basic ${auth}`,
       "Content-Type": "text/xml",
-      "Accept": "text/xml",
+      "Accept": "application/xml",
       "X-Requested-With": "Cloudflare Pages Qualys Setup",
     };
 

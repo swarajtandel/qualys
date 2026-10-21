@@ -643,7 +643,7 @@ testAuthBtn.addEventListener("click", async () => {
     } else {
       connDot.style.background = "#ef4444";
       connStatus.textContent = "Auth Failed";
-      const reason = result.error || result.message;
+      const reason = result.error || result.message || (result.status ? `API returned HTTP ${result.status}` : "Invalid credentials or unauthorized response");
       recordAuditTask({
         action: "Authentication",
         category: "auth",

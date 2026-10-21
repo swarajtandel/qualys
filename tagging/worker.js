@@ -239,7 +239,7 @@ export default {
           headers: {
             "Authorization": `Basic ${auth}`,
             "Content-Type": "text/xml",
-            "Accept": "text/xml",
+            "Accept": "application/xml",
             "X-Requested-With": "Cloudflare Worker Qualys Setup",
           },
           body: searchXml,
@@ -247,14 +247,27 @@ export default {
 
         const text = await res.text();
         if (!res.ok) {
-          return jsonResponse({ success: false, status: res.status, error: text }, 401, request);
+          let errMsg = `HTTP ${res.status}`;
+          if (text) {
+            const errMatch = text.match(/<(?:errorMessage|errorReason|responseErrorDetails|responseErrorMessage)>([^<]+)<\//i);
+            const codeMatch = text.match(/<(?:responseCode|errorCode)>([^<]+)<\//i);
+            errMsg = errMatch ? errMatch[1].trim() : (codeMatch ? codeMatch[1].trim() : `HTTP ${res.status}`);
+          }
+          return jsonResponse({ success: false, status: res.status, error: errMsg }, 401, request);
         }
 
         const isSuccess = text.includes("<responseCode>SUCCESS</responseCode>");
+        let message = "Authentication successful and Qualys API reachable.";
+        if (!isSuccess) {
+          const errMatch = text.match(/<(?:errorMessage|errorReason|responseErrorDetails|responseErrorMessage)>([^<]+)<\//i);
+          const codeMatch = text.match(/<(?:responseCode|errorCode)>([^<]+)<\//i);
+          message = errMatch ? errMatch[1].trim() : (codeMatch ? codeMatch[1].trim() : "API returned unexpected response code.");
+        }
         return jsonResponse({
           success: isSuccess,
           status: res.status,
-          message: isSuccess ? "Authentication successful and Qualys API reachable." : "API returned unexpected response code.",
+          message,
+          error: isSuccess ? null : message,
         }, isSuccess ? 200 : 400, request);
       } catch (err) {
         return jsonResponse({ success: false, error: err.message }, 500, request);
@@ -274,7 +287,7 @@ export default {
         const headers = {
           "Authorization": `Basic ${auth}`,
           "Content-Type": "text/xml",
-          "Accept": "text/xml",
+          "Accept": "application/xml",
           "X-Requested-With": "Cloudflare Worker Qualys Setup",
         };
 

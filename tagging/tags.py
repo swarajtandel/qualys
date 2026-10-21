@@ -163,7 +163,7 @@ session.auth = (username, password)
 session.headers.update({
     "X-Requested-With": "Python Qualys Dynamic Tag Setup",
     "Content-Type": "text/xml",
-    "Accept": "text/xml",
+    "Accept": "application/xml",
 })
 tag_api = f"{base_url}/qps/rest/{API_VERSION}"
 
