@@ -4,7 +4,13 @@
  * Tag Selection Checkboxes, and Session-Only Live Progress Tracking.
  */
 
-// 1. In-Memory Catalog State (Session only - no permanent storage)
+// 1. Catalog & Tag State (Persistent storage via localStorage across browser refreshes)
+const STORAGE_KEY_CATALOG = "qualys_tag_catalog_v1";
+const STORAGE_KEY_TAG_STATE = "qualys_tag_state_v1";
+const STORAGE_KEY_USER = "qualys_user_account";
+const STORAGE_KEY_POD = "qualys_user_pod";
+const STORAGE_KEY_LOGS = "qualys_audit_logs_v1";
+
 let catalog = { parents: {}, platforms: [], skipped: [] };
 let tagState = {}; // Keyed by tag name: { kind, parent, qql, criticality, selected: boolean, status: 'planned'|'running'|'created'|'reused'|'failed', failReason: null, id: null }
 let currentFilter = "ALL";
@@ -12,6 +18,42 @@ let searchQuery = "";
 let isProcessing = false;
 let editingChildTag = null; // null if creating new, or { parent, name } if editing
 let collapsedParents = new Set(); // Track collapsed parent tag sections
+
+function saveCatalogToStorage() {
+  try {
+    if (catalog && catalog.parents) {
+      localStorage.setItem(STORAGE_KEY_CATALOG, JSON.stringify(catalog.parents));
+    }
+  } catch (e) {
+    console.warn("Failed to persist catalog to localStorage", e);
+  }
+}
+
+function saveTagStateToStorage() {
+  try {
+    const serializedState = {};
+    Object.entries(tagState).forEach(([key, val]) => {
+      serializedState[key] = {
+        selected: val.selected,
+        status: val.status,
+        failReason: val.failReason,
+        id: val.id,
+      };
+    });
+    localStorage.setItem(STORAGE_KEY_TAG_STATE, JSON.stringify(serializedState));
+  } catch (e) {
+    console.warn("Failed to persist tagState to localStorage", e);
+  }
+}
+
+function saveAuditLogsToStorage() {
+  try {
+    const logsToSave = auditLogs.slice(0, 150);
+    localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logsToSave));
+  } catch (e) {
+    console.warn("Failed to persist auditLogs to localStorage", e);
+  }
+}
 
 // DOM References - Navigation
 const navItems = document.querySelectorAll(".nav-item");
@@ -136,6 +178,18 @@ let logCount = 0;
 let auditLogs = []; // Structured storage: [{ time, istTimestamp, user, pod, category, type, action, message }]
 let currentLogCategoryFilter = "ALL";
 
+// Restore persistent audit logs from storage if available
+try {
+  const savedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
+  if (savedLogs) {
+    auditLogs = JSON.parse(savedLogs);
+    logCount = auditLogs.length;
+    if (logSummary) logSummary.textContent = `${logCount} tasks`;
+  }
+} catch (e) {
+  console.warn("Could not parse saved audit logs", e);
+}
+
 function getIstTimestamp(d = new Date()) {
   const date = d instanceof Date ? d : new Date(d);
   const formatted = date.toLocaleString("en-IN", {
@@ -231,6 +285,10 @@ function recordAuditTask({ action, category = "general", type = "info", message,
   };
 
   auditLogs.unshift(taskEntry);
+  if (auditLogs.length > 200) {
+    auditLogs = auditLogs.slice(0, 200);
+  }
+  saveAuditLogsToStorage();
 
   // Print summary to retractable console
   logToConsole(`[${resolvedAction}] ${message}`, type);
@@ -269,6 +327,9 @@ clearLogsBtn.addEventListener("click", () => {
   consoleLogs.innerHTML = "";
   auditLogs = [];
   logCount = 0;
+  try {
+    localStorage.removeItem(STORAGE_KEY_LOGS);
+  } catch (e) {}
   logSummary.textContent = "Logs cleared";
   if (document.getElementById("logsView")?.classList.contains("active-view")) {
     renderLogsView();
@@ -278,8 +339,31 @@ clearLogsBtn.addEventListener("click", () => {
 // -------------------------------------------------------------
 // 4. USER CREDENTIAL & TOP BAR TRACKING
 // -------------------------------------------------------------
-usernameInput.addEventListener("input", updateTopBarUser);
-platformSelect.addEventListener("change", updateTopBarUser);
+// Restore saved credentials from localStorage
+try {
+  const savedUser = localStorage.getItem(STORAGE_KEY_USER);
+  if (savedUser && usernameInput) {
+    usernameInput.value = savedUser;
+  }
+  const savedPod = localStorage.getItem(STORAGE_KEY_POD);
+  if (savedPod && platformSelect) {
+    platformSelect.value = savedPod;
+  }
+} catch (e) {}
+
+usernameInput.addEventListener("input", () => {
+  updateTopBarUser();
+  try {
+    localStorage.setItem(STORAGE_KEY_USER, usernameInput.value.trim());
+  } catch (e) {}
+});
+
+platformSelect.addEventListener("change", () => {
+  updateTopBarUser();
+  try {
+    localStorage.setItem(STORAGE_KEY_POD, platformSelect.value);
+  } catch (e) {}
+});
 
 function updateTopBarUser() {
   const user = usernameInput.value.trim();
@@ -319,14 +403,42 @@ if (togglePasswordBtn) {
 // -------------------------------------------------------------
 // 5. CATALOG DATA INITIALIZATION
 // -------------------------------------------------------------
-async function loadCatalog() {
+async function loadCatalog(forceReset = false) {
   try {
-    logToConsole("Fetching dynamic tag catalog from local proxy server...", "info");
+    logToConsole("Fetching dynamic tag catalog...", "info");
+
+    let savedParents = null;
+    if (!forceReset) {
+      try {
+        const rawCatalog = localStorage.getItem(STORAGE_KEY_CATALOG);
+        if (rawCatalog) {
+          const parsed = JSON.parse(rawCatalog);
+          if (parsed && typeof parsed === "object" && Object.keys(parsed).length > 0) {
+            savedParents = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn("Could not parse saved catalog from localStorage", e);
+      }
+    }
+
     const res = await fetch("/api/catalog");
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    catalog = await res.json();
+    const apiCatalog = await res.json();
 
-    initTagState();
+    if (savedParents && !forceReset) {
+      catalog = {
+        parents: savedParents,
+        platforms: apiCatalog.platforms || [],
+        skipped: apiCatalog.skipped || [],
+      };
+      logToConsole(`Restored ${Object.keys(catalog.parents).length} categories and ${getTotalChildren()} dynamic tags from browser storage.`, "info");
+    } else {
+      catalog = apiCatalog;
+      saveCatalogToStorage();
+    }
+
+    initTagState(forceReset);
     renderPills();
     renderDashboardTable();
     updateDashboardStats();
@@ -335,14 +447,31 @@ async function loadCatalog() {
       action: "Catalog Load",
       category: "general",
       type: "info",
-      message: `Loaded catalog with ${Object.keys(catalog.parents).length} parent categories and ${getTotalChildren()} dynamic tags.`,
+      message: savedParents && !forceReset
+        ? `Loaded catalog with ${Object.keys(catalog.parents).length} parent categories and ${getTotalChildren()} dynamic tags (restored from browser storage).`
+        : `Loaded default catalog with ${Object.keys(catalog.parents).length} parent categories and ${getTotalChildren()} dynamic tags.`,
       details: {
         parentsCount: Object.keys(catalog.parents).length,
         tagsCount: getTotalChildren(),
         categories: Object.keys(catalog.parents),
+        source: savedParents && !forceReset ? "localStorage" : "api",
       },
     });
   } catch (err) {
+    let savedParents = null;
+    try {
+      const rawCatalog = localStorage.getItem(STORAGE_KEY_CATALOG);
+      if (rawCatalog) savedParents = JSON.parse(rawCatalog);
+    } catch (e) {}
+
+    if (savedParents) {
+      catalog = { parents: savedParents, platforms: [], skipped: [] };
+      initTagState(forceReset);
+      renderPills();
+      renderDashboardTable();
+      updateDashboardStats();
+      updateTopBarUser();
+    }
     recordAuditTask({
       action: "Catalog Load",
       category: "general",
@@ -357,29 +486,42 @@ function getTotalChildren() {
   return Object.values(catalog.parents).reduce((acc, curr) => acc + curr.length, 0);
 }
 
-function initTagState() {
+function initTagState(forceReset = false) {
+  let savedStatus = {};
+  if (!forceReset) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_TAG_STATE);
+      if (raw) savedStatus = JSON.parse(raw);
+    } catch (e) {
+      console.warn("Could not parse saved tagState", e);
+    }
+  }
+
   tagState = {};
   Object.entries(catalog.parents).forEach(([parentName, children]) => {
+    const pSaved = savedStatus[parentName] || {};
     tagState[parentName] = {
       kind: "parent",
-      selected: true,
-      status: "planned",
-      failReason: null,
-      id: null,
+      selected: pSaved.selected !== undefined ? pSaved.selected : true,
+      status: pSaved.status || "planned",
+      failReason: pSaved.failReason || null,
+      id: pSaved.id || null,
     };
     children.forEach((child) => {
+      const cSaved = savedStatus[child.name] || {};
       tagState[child.name] = {
         kind: "child",
         parent: parentName,
         qql: child.qql,
         criticality: child.criticality,
-        selected: true,
-        status: "planned",
-        failReason: null,
-        id: null,
+        selected: cSaved.selected !== undefined ? cSaved.selected : true,
+        status: cSaved.status || "planned",
+        failReason: cSaved.failReason || null,
+        id: cSaved.id || null,
       };
     });
   });
+  saveTagStateToStorage();
 }
 
 // -------------------------------------------------------------
@@ -473,6 +615,7 @@ function renderDashboardTable() {
       });
       renderDashboardTable();
       updateDashboardStats();
+      saveTagStateToStorage();
     });
 
     // Children Rows (Only render if not collapsed)
@@ -502,6 +645,7 @@ function renderDashboardTable() {
         cCheckbox.addEventListener("change", (e) => {
           tagState[child.name].selected = e.target.checked;
           updateDashboardStats();
+          saveTagStateToStorage();
         });
       });
     }
@@ -514,17 +658,20 @@ function renderDashboardTable() {
 selectAllBtn.addEventListener("click", () => {
   Object.keys(tagState).forEach((key) => { tagState[key].selected = true; });
   renderDashboardTable();
+  saveTagStateToStorage();
 });
 
 deselectAllBtn.addEventListener("click", () => {
   Object.keys(tagState).forEach((key) => { tagState[key].selected = false; });
   renderDashboardTable();
+  saveTagStateToStorage();
 });
 
 headerCheckbox.addEventListener("change", (e) => {
   const checked = e.target.checked;
   Object.keys(tagState).forEach((key) => { tagState[key].selected = checked; });
   renderDashboardTable();
+  saveTagStateToStorage();
 });
 
 function updateDashboardStats() {
@@ -580,6 +727,7 @@ function updateTagStatus(name, status, label, failReason = null) {
     if (failReason) el.title = failReason;
   }
   updateDashboardStats();
+  saveTagStateToStorage();
 }
 
 // Helper to get active credentials safely
@@ -792,6 +940,7 @@ executeBtn.addEventListener("click", async () => {
 
         if (findData.existing && findData.existing.id) {
           parentIds[parentName] = findData.existing.id;
+          if (tagState[parentName]) tagState[parentName].id = findData.existing.id;
           updateTagStatus(parentName, "reused", "Reused");
           reusedCount++;
           refreshBannerStats();
@@ -817,6 +966,7 @@ executeBtn.addEventListener("click", async () => {
           const createData = await createRes.json();
           if (createData.success && createData.result.tagId) {
             parentIds[parentName] = createData.result.tagId;
+            if (tagState[parentName]) tagState[parentName].id = createData.result.tagId;
             updateTagStatus(parentName, "created", "Created");
             createdCount++;
             refreshBannerStats();
@@ -902,6 +1052,7 @@ executeBtn.addEventListener("click", async () => {
           const findData = await findRes.json();
 
           if (findData.existing && findData.existing.id) {
+            if (tagState[child.name]) tagState[child.name].id = findData.existing.id;
             updateTagStatus(child.name, "reused", "Reused");
             reusedCount++;
             refreshBannerStats();
@@ -932,6 +1083,7 @@ executeBtn.addEventListener("click", async () => {
             });
             const createData = await createRes.json();
             if (createData.success && createData.result.tagId) {
+              if (tagState[child.name]) tagState[child.name].id = createData.result.tagId;
               updateTagStatus(child.name, "created", "Created");
               createdCount++;
               refreshBannerStats();
@@ -976,6 +1128,7 @@ executeBtn.addEventListener("click", async () => {
       bannerSubtitle.textContent = `${done} total items processed (${createdCount} created, ${reusedCount} reused, ${failedCount} failed) — Click to view details`;
     }
     renderBannerBreakdownTable(bannerOperationResults);
+    saveTagStateToStorage();
 
     // Record exactly 1 summary log for the task
     const pctSuccess = totalSteps > 0 ? Math.round(((createdCount + reusedCount) / totalSteps) * 100) : 100;
@@ -1198,6 +1351,8 @@ saveParentBtn.addEventListener("click", () => {
     renderPills();
     renderCatalogView();
     renderDashboardTable();
+    saveCatalogToStorage();
+    saveTagStateToStorage();
     recordAuditTask({
       action: "Parent Rename",
       category: "tag",
@@ -1225,6 +1380,8 @@ saveParentBtn.addEventListener("click", () => {
     renderPills();
     renderCatalogView();
     renderDashboardTable();
+    saveCatalogToStorage();
+    saveTagStateToStorage();
     recordAuditTask({
       action: "Parent Create",
       category: "tag",
@@ -1287,6 +1444,8 @@ window.deleteChildTag = function(parentName, index) {
   catalog.parents[parentName].splice(index, 1);
   renderCatalogView();
   renderDashboardTable();
+  saveCatalogToStorage();
+  saveTagStateToStorage();
   recordAuditTask({
     action: "Tag Remove",
     category: "tag",
@@ -1315,6 +1474,8 @@ window.deleteParentCategory = function(parentName) {
   renderPills();
   renderCatalogView();
   renderDashboardTable();
+  saveCatalogToStorage();
+  saveTagStateToStorage();
   recordAuditTask({
     action: "Parent Delete",
     category: "tag",
@@ -1372,6 +1533,9 @@ saveChildBtn.addEventListener("click", () => {
     }
     tagState[name] = { kind: "child", parent: parentName, qql, criticality: crit, selected: true, status: "planned", id: null };
 
+    saveCatalogToStorage();
+    saveTagStateToStorage();
+
     const changeCountStr = changes.length > 0 ? `${changes.length} change${changes.length === 1 ? "" : "s"} made` : "no field changes";
     recordAuditTask({
       action: "Tag Edit",
@@ -1391,6 +1555,9 @@ saveChildBtn.addEventListener("click", () => {
     // Create mode
     catalog.parents[parentName].push({ name, qql, criticality: crit });
     tagState[name] = { kind: "child", parent: parentName, qql, criticality: crit, selected: true, status: "planned", id: null };
+    saveCatalogToStorage();
+    saveTagStateToStorage();
+
     recordAuditTask({
       action: "Tag Create",
       category: "tag",
@@ -1411,9 +1578,14 @@ saveChildBtn.addEventListener("click", () => {
   renderDashboardTable();
 });
 
-resetDefaultCatalogBtn.addEventListener("click", () => {
+resetDefaultCatalogBtn.addEventListener("click", async () => {
   if (confirm("Reset catalog back to initial 58 dynamic tags and 9 parents?")) {
-    loadCatalog();
+    try {
+      localStorage.removeItem(STORAGE_KEY_CATALOG);
+      localStorage.removeItem(STORAGE_KEY_TAG_STATE);
+    } catch (e) {}
+    await loadCatalog(true);
+    renderCatalogView();
   }
 });
 
@@ -1485,7 +1657,10 @@ if (exportReportBtn) {
 
 refreshBtn.addEventListener("click", () => {
   if (confirm("Reset current session progress and reload clean tags?")) {
-    initTagState();
+    try {
+      localStorage.removeItem(STORAGE_KEY_TAG_STATE);
+    } catch (e) {}
+    initTagState(true);
     renderDashboardTable();
     recordAuditTask({
       action: "Session Reset",
@@ -1941,6 +2116,9 @@ if (viewClearLogsBtn) {
     if (confirm("Clear all recorded session activity logs?")) {
       auditLogs = [];
       logCount = 0;
+      try {
+        localStorage.removeItem(STORAGE_KEY_LOGS);
+      } catch (e) {}
       if (consoleLogs) consoleLogs.innerHTML = "";
       if (logSummary) logSummary.textContent = "Logs cleared";
       renderLogsView();
