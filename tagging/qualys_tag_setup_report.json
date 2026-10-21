@@ -1,0 +1,566 @@
+{
+  "platform": "US2",
+  "base_url": "https://qualysapi.qg2.apps.qualys.com",
+  "mode": "strict",
+  "dry_run": true,
+  "rule_type_for_dynamic_children": "GLOBAL_ASSET_VIEW",
+  "created": [],
+  "reused": [],
+  "planned": [
+    {
+      "name": "OS: Operating Systems",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "Type: Asset Types",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "OS Version: Windows Client",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "OS Version: Windows Server",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "OS Version: Linux",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "Lifecycle: OS Support Status",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "Lifecycle: Hardware Support Status",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "Cloud: Provider / Discovery Source",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "name": "Discovery: Asset Source",
+      "kind": "parent",
+      "action": "reuse if present; otherwise create STATIC"
+    },
+    {
+      "parent": "OS: Operating Systems",
+      "name": "OS: Windows Server",
+      "qql": "operatingSystem.category1:`Windows` and operatingSystem.category2:`Server`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 4,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS: Operating Systems",
+      "name": "OS: Windows Client",
+      "qql": "operatingSystem.category1:`Windows` and operatingSystem.category2:`Client`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 2,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS: Operating Systems",
+      "name": "OS: Linux Server",
+      "qql": "operatingSystem.category1:`Linux` and operatingSystem.category2:`Server`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 4,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS: Operating Systems",
+      "name": "OS: Linux Client",
+      "qql": "operatingSystem.category1:`Linux` and operatingSystem.category2:`Client`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 2,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS: Operating Systems",
+      "name": "OS: Network OS",
+      "qql": "operatingSystem.category1:`Network Operating System`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Type: Asset Types",
+      "name": "Type: Servers",
+      "qql": "operatingSystem.category2:`Server` or hardware.category2:`Server`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 4,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Type: Asset Types",
+      "name": "Type: Database Servers",
+      "qql": "software:(category1:`Databases` and component:`Server`) and (hardware.category2:`Server` or operatingSystem.category2:`Server`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 4,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Type: Asset Types",
+      "name": "Type: Domain Controllers",
+      "qql": "compute.domainRole:`Primary Domain Controller`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 5,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Type: Asset Types",
+      "name": "Type: Clients/Workstations",
+      "qql": "operatingSystem.category2:`Client` or hardware.category2:`Desktop`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 2,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Type: Asset Types",
+      "name": "Type: Network Devices",
+      "qql": "hardware.category1:`Networking Device` or hardware.category1:`Network Security Device`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Type: Asset Types",
+      "name": "Type: Printers",
+      "qql": "hardware.category1:`Printers`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 1,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Client",
+      "name": "OS Version: Windows 11",
+      "qql": "operatingSystem.name:`Microsoft Windows 11`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Client",
+      "name": "OS Version: Windows 10",
+      "qql": "operatingSystem.name:`Microsoft Windows 10`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Client",
+      "name": "OS Version: Windows 8.1",
+      "qql": "operatingSystem.name:`Microsoft Windows 8.1`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Client",
+      "name": "OS Version: Windows 7",
+      "qql": "operatingSystem.name:`Microsoft Windows 7`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Server",
+      "name": "OS Version: Windows Server 2025",
+      "qql": "operatingSystem.name:`Microsoft Windows Server 2025`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Server",
+      "name": "OS Version: Windows Server 2022",
+      "qql": "operatingSystem.name:`Microsoft Windows Server 2022`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Server",
+      "name": "OS Version: Windows Server 2019",
+      "qql": "operatingSystem.name:`Microsoft Windows Server 2019`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Server",
+      "name": "OS Version: Windows Server 2016",
+      "qql": "operatingSystem.name:`Microsoft Windows Server 2016`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Server",
+      "name": "OS Version: Windows Server 2012 R2",
+      "qql": "operatingSystem.name:`Microsoft Windows Server 2012 R2`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Server",
+      "name": "OS Version: Windows Server 2012",
+      "qql": "operatingSystem.name:`Microsoft Windows Server 2012`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Windows Server",
+      "name": "OS Version: Windows Server 2008 R2",
+      "qql": "operatingSystem.name:`Microsoft Windows Server 2008 R2`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Linux",
+      "name": "OS Version: Ubuntu",
+      "qql": "operatingSystem.name:`Ubuntu`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Linux",
+      "name": "OS Version: Red Hat Enterprise Linux",
+      "qql": "operatingSystem.name:`Red Hat Enterprise Linux`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Linux",
+      "name": "OS Version: SUSE Linux Enterprise Server",
+      "qql": "operatingSystem.name:`SUSE Linux Enterprise Server`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Linux",
+      "name": "OS Version: Debian",
+      "qql": "operatingSystem.name:`Debian`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Linux",
+      "name": "OS Version: Oracle Linux",
+      "qql": "operatingSystem.name:`Oracle Linux`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "OS Version: Linux",
+      "name": "OS Version: Amazon Linux",
+      "qql": "operatingSystem.name:`Amazon Linux`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Lifecycle: OS Support Status",
+      "name": "Lifecycle: OS End-of-Life",
+      "qql": "operatingSystem.lifecycle.stage:`EOL`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 4,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Lifecycle: OS Support Status",
+      "name": "Lifecycle: OS End-of-Life / End-of-Support",
+      "qql": "operatingSystem.lifecycle.stage:`EOL/EOS`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 4,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Lifecycle: OS Support Status",
+      "name": "Lifecycle: OS Lifecycle Unknown",
+      "qql": "operatingSystem.lifecycle.stage:`Unknown`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Lifecycle: Hardware Support Status",
+      "name": "Lifecycle: Hardware End of Sale",
+      "qql": "hardware.lifecycle.stage:`EOS`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Lifecycle: Hardware Support Status",
+      "name": "Lifecycle: Hardware Obsolete",
+      "qql": "hardware.lifecycle.stage:`OBS`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 4,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Lifecycle: Hardware Support Status",
+      "name": "Lifecycle: Hardware Lifecycle Unknown",
+      "qql": "hardware.lifecycle.stage:`Unknown`",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Cloud: Provider / Discovery Source",
+      "name": "Cloud: AWS / EC2",
+      "qql": "asset.inventory:(source: EC2)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Cloud: Provider / Discovery Source",
+      "name": "Cloud: Azure",
+      "qql": "asset.inventory:(source: Azure)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Cloud: Provider / Discovery Source",
+      "name": "Cloud: Google Cloud",
+      "qql": "asset.inventory:(source: GCP)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Cloud: Provider / Discovery Source",
+      "name": "Cloud: Oracle Cloud (OCI)",
+      "qql": "asset.inventory:(source: OCI)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: API",
+      "qql": "asset.inventory:(source: API)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: Active Directory",
+      "qql": "asset.inventory:(source: `Active Directory`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: Appliance",
+      "qql": "asset.inventory:(source: Appliance)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: Azure",
+      "qql": "asset.inventory:(source: Azure)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: BMC Helix",
+      "qql": "asset.inventory:(source: `BMC Helix`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: CAPS",
+      "qql": "asset.inventory:(source: CAPS)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: CMDB",
+      "qql": "asset.inventory:(source: CMDB)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: Cloud Agent",
+      "qql": "asset.inventory:(source: `Cloud Agent`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: EASM",
+      "qql": "asset.inventory:(source: EASM)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: EC2",
+      "qql": "asset.inventory:(source: EC2)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: GCP",
+      "qql": "asset.inventory:(source: GCP)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: ICS OCA",
+      "qql": "asset.inventory:(source: `ICS OCA`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: IP Scanner",
+      "qql": "asset.inventory:(source: `IP Scanner`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: Malware Domain",
+      "qql": "asset.inventory:(source: `Malware Domain`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: OCA",
+      "qql": "asset.inventory:(source: OCA)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: OCI",
+      "qql": "asset.inventory:(source: OCI)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: Passive Sensor",
+      "qql": "asset.inventory:(source: `Passive Sensor`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: ServiceNow",
+      "qql": "asset.inventory:(source: ServiceNow)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: VMWare vSphere",
+      "qql": "asset.inventory:(source: `VMWare vSphere`)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    },
+    {
+      "parent": "Discovery: Asset Source",
+      "name": "Discovery: Webhook",
+      "qql": "asset.inventory:(source: Webhook)",
+      "ruleType": "GLOBAL_ASSET_VIEW",
+      "criticalityScore": 3,
+      "action": "reuse if exact name exists; otherwise create"
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Discovery: API Based Scan",
+      "qql": "asset.inventory:(source: `API Based Scan`)",
+      "reason": "Skipped in strict mode: source value is not in the documented Asset Inventory source list."
+    },
+    {
+      "name": "Discovery: IBM",
+      "qql": "asset.inventory:(source: `IBM`)",
+      "reason": "Skipped in strict mode: source value is not in the documented Asset Inventory source list."
+    },
+    {
+      "name": "Discovery: LDAP",
+      "qql": "asset.inventory:(source: `LDAP`)",
+      "reason": "Skipped in strict mode: source value is not in the documented Asset Inventory source list."
+    },
+    {
+      "name": "Discovery: Mobility Scanner",
+      "qql": "asset.inventory:(source: `Mobility Scanner`)",
+      "reason": "Skipped in strict mode: source value is not in the documented Asset Inventory source list."
+    },
+    {
+      "name": "Discovery: SCANNER",
+      "qql": "asset.inventory:(source: `SCANNER`)",
+      "reason": "Skipped in strict mode: source value is not in the documented Asset Inventory source list."
+    },
+    {
+      "name": "Discovery: Snapshot Based Scan",
+      "qql": "asset.inventory:(source: `Snapshot Based Scan`)",
+      "reason": "Skipped in strict mode: source value is not in the documented Asset Inventory source list."
+    },
+    {
+      "name": "Discovery: VMware ESXi",
+      "qql": "asset.inventory:(source: `VMware ESXi`)",
+      "reason": "Skipped in strict mode: source value is not in the documented Asset Inventory source list."
+    }
+  ],
+  "failed": [],
+  "notes": [
+    "Dry run validates the planned configuration only; it does not contact the tag API.",
+    "When DRY_RUN=False, each create request is validated by the Qualys API response.",
+    "QQL token/syntax support does not guarantee that a query matches assets in this tenant.",
+    "Existing child tags are reused and are not overwritten; review their current rule if the rule differs.",
+    "OS version names must be checked against the OS names returned by this tenant's inventory.",
+    "No authentication login/logout calls are made: the QPS API calls use HTTP Basic Auth consistently."
+  ]
+}

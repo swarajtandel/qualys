@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qualys Dynamic Tag Manager | Cloudflare Pages</title>
+  <meta name="description" content="Automate and visualize Qualys Asset Inventory dynamic tags with Cloudflare Pages and Workers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">Qualys Tag Orchestrator</h1>
+          <p class="brand-subtitle">Serverless Dynamic Asset Tagging via Cloudflare Edge</p>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge edge">⚡ Cloudflare Edge</span>
+        <span class="badge qualys">🛡️ Qualys API 2.0</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-grid">
+      <!-- Left Column: Controls & Configuration -->
+      <aside class="glass-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">⚙️ Tenant & Credentials</h2>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="platformSelect">Qualys Platform (POD)</label>
+          <select id="platformSelect" class="form-control">
+            <option value="US1">US1 (qualysapi.qualys.com)</option>
+            <option value="US2" selected>US2 (qualysapi.qg2.apps.qualys.com)</option>
+            <option value="US3">US3 (qualysapi.qg3.apps.qualys.com)</option>
+            <option value="US4">US4 (qualysapi.qg4.apps.qualys.com)</option>
+            <option value="EU1">EU1 (qualysapi.qualys.eu)</option>
+            <option value="EU2">EU2 (qualysapi.qg2.apps.qualys.eu)</option>
+            <option value="EU3">EU3 (qualysapi.qg3.apps.qualys.it)</option>
+            <option value="UK">UK (qualysapi.qg1.apps.qualys.co.uk)</option>
+            <option value="IN">IN (qualysapi.qg1.apps.qualys.in)</option>
+            <option value="CA">CA (qualysapi.qg1.apps.qualys.ca)</option>
+            <option value="AE">AE (qualysapi.qg1.apps.qualys.ae)</option>
+            <option value="AU">AU (qualysapi.qg1.apps.qualys.com.au)</option>
+            <option value="KSA">KSA (qualysapi.qg1.apps.qualysksa.com)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="usernameInput">API Username</label>
+          <input type="text" id="usernameInput" class="form-control" placeholder="e.g. testq2st5" autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="passwordInput">API Password</label>
+          <input type="password" id="passwordInput" class="form-control" placeholder="••••••••••••" autocomplete="current-password">
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="dryRunCheckbox" checked>
+            <span><strong>Dry Run Mode</strong> (Simulate without creating tags in tenant)</span>
+          </label>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+          <button id="testAuthBtn" class="btn btn-secondary">
+            <span>🔑</span> Test Connection
+          </button>
+          <button id="executeBtn" class="btn btn-primary">
+            <span>🚀</span> Start Tag Setup
+          </button>
+          <button id="exportReportBtn" class="btn btn-secondary">
+            <span>📥</span> Download Report JSON
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right Column: Dashboard & Execution -->
+      <main style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Realtime Stats -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <div id="statPlanned" class="stat-value stat-planned">0</div>
+            <div class="stat-label">Planned Tags</div>
+          </div>
+          <div class="stat-box">
+            <div id="statCreated" class="stat-value stat-created">0</div>
+            <div class="stat-label">Created</div>
+          </div>
+          <div class="stat-box">
+            <div id="statReused" class="stat-value stat-reused">0</div>
+            <div class="stat-label">Reused (Found)</div>
+          </div>
+          <div class="stat-box">
+            <div id="statFailed" class="stat-value stat-failed">0</div>
+            <div class="stat-label">Failed</div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progressContainer" class="progress-container">
+          <div class="progress-header">
+            <span id="progressText">Processing tags...</span>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <!-- Tag Explorer Panel -->
+        <div class="glass-panel" style="padding: 20px;">
+          <div class="panel-header" style="margin-bottom: 14px;">
+            <h2 class="panel-title">🏷️ Tag Hierarchy & QQL Rules</h2>
+          </div>
+          <!-- Filter Tabs -->
+          <div id="tabFilter" class="tabs"></div>
+          <!-- Tree / Table -->
+          <div id="tagTree" class="tag-tree-container"></div>
+        </div>
+
+        <!-- Real-time Activity Logs -->
+        <div class="glass-panel" style="padding: 20px;">
+          <div class="panel-header" style="margin-bottom: 12px;">
+            <h2 class="panel-title">📟 Execution Log Console</h2>
+          </div>
+          <div id="consoleLogs" class="console-box"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

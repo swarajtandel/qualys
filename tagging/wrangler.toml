@@ -1,0 +1,6 @@
+name = "qualys-tag-manager"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "public"
+
+# The worker entry point for Cloudflare Functions / Workers
+main = "worker.js"
