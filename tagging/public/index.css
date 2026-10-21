@@ -57,8 +57,8 @@ html, body {
 
 /* 1. LEFT SIDEBAR (Qualys Standard Navigation) */
 .sidebar {
-  width: 220px;
-  min-width: 220px;
+  width: 195px;
+  min-width: 195px;
   background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border-subtle);
   display: flex;
@@ -319,8 +319,8 @@ html, body {
 .content-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 290px 1fr;
-  gap: 14px;
+  grid-template-columns: 215px 1fr;
+  gap: 12px;
   min-height: 0; /* Critical for inner scrolling */
   overflow: hidden;
 }
@@ -330,7 +330,7 @@ html, body {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 12px 12px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
@@ -351,24 +351,24 @@ html, body {
 }
 
 .form-field {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .form-field label {
   display: block;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 500;
   color: var(--text-muted);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .form-input, .form-select {
   width: 100%;
-  padding: 7px 10px;
-  font-size: 12px;
+  padding: 6px 8px;
+  font-size: 11.5px;
   background: #ffffff;
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
+  border-radius: 5px;
   color: var(--text-main);
   outline: none;
   transition: border-color 0.15s;
@@ -381,13 +381,13 @@ html, body {
 .dry-run-toggle {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
+  gap: 6px;
+  padding: 6px 8px;
   background: #f8fafc;
   border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  margin-top: 6px;
-  font-size: 11.5px;
+  border-radius: 5px;
+  margin-top: 4px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
 }
@@ -399,8 +399,8 @@ html, body {
 .action-buttons {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .btn-qualys-primary {
